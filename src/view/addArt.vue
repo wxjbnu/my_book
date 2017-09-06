@@ -8,18 +8,24 @@
                 @blur="onEditorBlur($event)"
                 @focus="onEditorFocus($event)"
                 @ready="onEditorReady($event)">
-  </quill-editor>
-  <p>https://github.com/surmon-china/vue-quill-editor</p>
-  <p>https://github.com/vuejs/awesome-vue#rich-text-editing</p>
+    </quill-editor>
+    <p><button @click="addArt">添加文章</button></p>
+    <p>https://github.com/surmon-china/vue-quill-editor</p>
+    <p>https://github.com/vuejs/awesome-vue#rich-text-editing</p>
+    <p>https://github.com/quilljs/quill/</p>
+    <p>{{content}}</p>
   </div>
 </template>
 
 <script>
+const AV = window.AV
+const table = 'books'
 export default {
   name: 'add',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      editorOption: {},
       content: ''
     }
   },
@@ -36,7 +42,20 @@ export default {
     onEditorChange ({editor, html, text}) {
       console.log('editor change!', editor, html, text)
       this.content = html
+    },
+    addArt () {
+      var TestObject = AV.Object.extend(table)
+      var testObject = new TestObject()
+      testObject.save({
+        title: 'Hello World!',
+        content: this.content
+      }).then(function (object) {
+        alert('add article!')
+      })
     }
+  },
+  mounted () {
+    // console.log(window.AV)
   }
 }
 </script>
