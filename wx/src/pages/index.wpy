@@ -1,0 +1,228 @@
+<style lang="less">
+  .main-head{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  .userinfo {
+    display: flex;
+    // height: 100rpx;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .userinfo-avatar {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+  }
+
+  .userinfo-nickname {
+    color: #aaa;
+  }
+  .flex-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around; //space-between space-around
+  }
+  .cont-item{
+    text-align:justify;
+    text-indent: 2rem;
+    padding-bottom: 20rpx;
+  }
+  .page-p{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+  }
+  .page-item{
+    background: #3ee;
+    display:block;
+    width: 50rpx;
+    height: 50rpx;
+    padding: 0 10rpx;
+    margin: 0 5rpx;
+    box-sizing: border-box;
+  }
+  .footer{
+    position: fixed;
+    bottom: 20rpx;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+</style>
+<template>
+  <view class="container">
+    
+    <panel class="main-head">
+      <!--<view class="flex-row">-->
+        <view>
+          <button type="default"
+          disabled="{{pages.prevDisabled}}" @tap="prevPage" hover-class="other-button-hover">上一页</button>
+        </view>
+        <view class="userinfo">
+          <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+          <view class="userinfo-nickname">{{ userInfo.nickName }}{{direction}}</view>
+        </view>
+        <view>
+          <button type="default"
+          disabled="{{pages.nextDisabled}}" @tap="nextPage" hover-class="other-button-hover">下一页</button>
+        </view>
+      <!--</view>-->
+    </panel>
+
+    <scroll-view scroll-y @scrolltolower="lower" style="height:{{view.height}}rpx">
+      <view style="padding:50rpx 80rpx;">
+        <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].title}}</view>
+        <repeat for="{{pages.cont[pages.pagesNum].cont}}" index="index" item="item" key="key">
+          <view class="cont-item">{{item}}</view>
+        </repeat>
+      </view>
+    </scroll-view>
+
+    <view class="footer">
+      <scroll-view scroll-x style="padding:10rpx 30rpx;box-sizing: border-box;">
+        <view class="page-p">
+          <repeat for="{{pages.cont}}" index="index" item="item" key="key">
+            <text class="page-item" style="" @tap="sel({{index}})">{{index+1}}</text>
+          </repeat>
+        </view>
+      </scroll-view>
+      
+      <view>共{{pages.cont.length}}页</view>
+    </view>
+
+
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import * as config from '../config'
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: 'test'
+    }
+    components = {
+    }
+
+    mixins = []
+
+    data = {
+      view: {// 设置view高度
+        height: wepy.$instance.globalData.HEIGHT - 300
+      },
+      pages: {
+        cont: config.tao1,
+        prevDisabled: true,
+        nextDisabled: false,
+        pagesNum: 0
+      },
+      mynum: 20,
+      userInfo: {
+        nickName: '加载中...'
+      },
+      normalTitle: '原始标题',
+      setTimeoutTitle: '标题三秒后会被修改',
+      netrst: '',
+      direction: ''
+    }
+
+    computed = {
+      now () {
+        return +new Date()
+      }
+    }
+
+    methods = {
+      prevPage: () => {
+        if (this.pages.pagesNum === 0) {
+          this.pages.prevDisabled = true
+          return
+        }
+        this.pages.prevDisabled = false
+        this.pages.pagesNum = this.pages.pagesNum - 1
+        this.$apply()
+        this.methods.initPageBtn()
+      },
+      nextPage: () => {
+        if (this.pages.pagesNum === this.pages.cont.length - 1) {
+          this.pages.nextDisabled = true
+          return
+        }
+        this.pages.nextDisabled = false
+        this.pages.pagesNum = this.pages.pagesNum + 1
+        this.$apply()
+        this.methods.initPageBtn()
+      },
+      initPageBtn: () => {
+        this.pages.prevDisabled = false
+        this.pages.nextDisabled = false
+        if (this.pages.pagesNum === 0) {
+          this.pages.prevDisabled = true
+          return
+        }
+        if (this.pages.pagesNum === this.pages.cont.length - 1) {
+          this.pages.nextDisabled = true
+          // return
+        }
+      },
+      sel: (index) => {
+        // wepy.showLoading({title:'wae'+index})
+        this.pages.pagesNum = index
+        this.$apply()
+        this.methods.initPageBtn()
+      },
+      lower: () => {
+        console.log('到底了')
+      },
+      plus () {
+        this.mynum++
+      },
+      counterEmit (...args) {
+        let $event = args[args.length - 1]
+        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+      }
+    }
+
+    events = {
+      'index-emit': (...args) => {
+        let $event = args[args.length - 1]
+        console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
+      }
+    }
+
+    onLoad() {
+      let self = this
+
+      // wepy.startCompass({
+      //   complete: function(r) {
+      //     wepy.onCompassChange(function (res) {
+      //       this.direction = res.direction
+      //       console.log(res.direction)
+      //     })
+      //   }
+      // })
+
+      this.$parent.getUserInfo(function (userInfo) {
+        if (userInfo) {
+          self.userInfo = userInfo
+        }
+        self.normalTitle = '标题已被修改'
+
+        self.setTimeoutTitle = '标题三秒后会被修改'
+        setTimeout(() => {
+          self.setTimeoutTitle = '到三秒了'
+          self.$apply()
+        }, 3000)
+
+        self.$apply()
+      })
+    }
+  }
+</script>
