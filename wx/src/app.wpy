@@ -12,6 +12,10 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
+// import AV form 'leancloud-storage'
+//   const appId = 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz';
+//   const appKey = 'LprdSt2PENxvkdrjqeErNIv6';
+//   AV.init({ appId, appKey });
 
 export default class extends wepy.app {
   config = {
@@ -41,7 +45,14 @@ export default class extends wepy.app {
   onLaunch() {
     // this.testAsync()
     // this.getUserInfo()
-    console.log(wepy.$instance)
+    var query = new AV.Query('books');
+      query.find().then(function (results) {
+      // 如果这样写，第二个条件将覆盖第一个条件，查询只会返回 priority = 1 的结果
+        console.log(results)
+      }, function (error) {
+
+      });
+
     try {
       const deviceInfo = wepy.getSystemInfoSync()
       console.log(deviceInfo)

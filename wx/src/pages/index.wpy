@@ -103,6 +103,7 @@
 <script>
   import wepy from 'wepy'
   import * as config from '../config'
+  
 
   export default class Index extends wepy.page {
     config = {
@@ -208,6 +209,7 @@
       //     })
       //   }
       // })
+      
 
       this.$parent.getUserInfo(function (userInfo) {
         if (userInfo) {
