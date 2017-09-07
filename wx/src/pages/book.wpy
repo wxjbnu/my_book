@@ -64,38 +64,32 @@
 </style>
 <template>
   <view class="container">
-    <!-- <panel class="main-head">
+    <panel class="main-head">
         <view>
           <button type="default"
-          disabled="{{pages.prevDisabled}}" @tap="prevPage" hover-class="other-button-hover">上一页</button>
+            disabled="{{pages.prevDisabled}}" @tap="prevPage" hover-class="other-button-hover">上一页</button>
         </view>
         <view class="userinfo">
-          <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+          <!-- <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/> -->
           <view class="userinfo-nickname">{{ userInfo.nickName }}{{direction}}</view>
         </view>
         <view>
           <button type="default"
-          disabled="{{pages.nextDisabled}}" @tap="nextPage" hover-class="other-button-hover">下一页</button>
+            disabled="{{pages.nextDisabled}}" @tap="nextPage" hover-class="other-button-hover">下一页</button>
         </view>
-    </panel> -->
+    </panel>
 
     <scroll-view scroll-y @scrolltolower="lower" style="height:{{view.height}}rpx">
-      <!-- <view style="padding:50rpx 80rpx;">
+      <view style="padding:50rpx 80rpx;">
         <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].title}}</view>
         <repeat for="{{pages.cont[pages.pagesNum].cont}}" index="index" item="item" key="key">
           <view class="cont-item">{{item}}</view>
         </repeat>
-      </view> -->
-      <view style="padding:20rpx;">
-        <repeat for="{{books}}" index="index" item="item" key="key">
-          <view class="books" @tap="bindtap({{item.book}})">
-            {{item.name}}
-          </view>
-        </repeat>
       </view>
+      
     </scroll-view>
 
-    <!-- <view class="footer">
+    <view class="footer">
       <scroll-view scroll-x style="padding:10rpx 30rpx;box-sizing: border-box;">
         <view class="page-p">
           <repeat for="{{pages.cont}}" index="index" item="item" key="key">
@@ -104,7 +98,7 @@
         </view>
       </scroll-view>
       <view>共{{pages.cont.length}}页</view>
-    </view> -->
+    </view>
 
 
 
@@ -184,13 +178,6 @@
           // return
         }
       },
-      bindtap: (book) => {
-        console.log(book)
-        wepy.navigateTo({
-          url: 'book?id=' + book
-        })
-          // doSomething
-      },
       sel: (index) => {
         // wepy.showLoading({title:'wae'+index})
         this.pages.pagesNum = index
@@ -216,8 +203,13 @@
       }
     }
 
-    onLoad() {
+    onLoad(options) {
       let self = this
+      console.log(options.id)
+      console.log(config)
+      console.log(config[options.id])
+      this.pages.cont = config[options.id]
+      this.$apply()
 
       // wepy.startCompass({
       //   complete: function(r) {
