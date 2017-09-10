@@ -3,6 +3,12 @@
     <h1>{{ msg }}</h1>
 {{bookArr}}
 
+    <div>
+      书名<input type="text" v-model="name">
+    </div>
+    <div>
+      章节名<input type="text" v-model="chapter">
+    </div>
     <div v-for="(book,index) in bookArr"
       :key="index">
       <textarea v-model="bookArr[index]" cols="50" rows="3"></textarea>
@@ -21,11 +27,14 @@
 <script>
 const AV = window.AV
 const table = 'wxbooks'
+const bookname = 'wxbooksname'
 export default {
   name: 'add',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      name: '', // 书名
+      chapter: '', // 章节名称
       itemArr: [''], // 至少有一项
       bookArr: [''], // 至少有一项
       editorOption: {},
@@ -43,13 +52,38 @@ export default {
     },
     addArt () {
       var TestObject = AV.Object.extend(table)
+      var BookObject = AV.Object.extend(bookname)
+      var bookQuery = new AV.Query(bookname)
+
       var testObject = new TestObject()
+      var bookObject = new BookObject()
+
+      var bname = this.name
+
       testObject.save({
-        title: 'Hello World!',
+        title: bname,
+        chapter: this.chapter,
         content: this.bookArr
       }).then(function (object) {
         alert('add article!')
       })
+
+      bookQuery.equalTo('title', bname)
+      bookQuery.find()
+      .then(function (results) {
+        if (results.length > 0) {
+          alert('已存在')
+        } else {
+          bookObject.save({
+            title: bname
+          }).then(function (object) {
+            alert('add title!')
+          })
+        }
+      }, function (error) {
+        console.log(error)
+      })
+      console.log(bookObject)
     }
   },
   mounted () {

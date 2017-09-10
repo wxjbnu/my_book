@@ -88,8 +88,8 @@
       </view> -->
       <view style="padding:20rpx;">
         <repeat for="{{books}}" index="index" item="item" key="key">
-          <view class="books" @tap="bindtap({{item.book}})">
-            {{item.name}}
+          <view class="books" @tap="bindtap({{item.title}})">
+            {{item.title}}
           </view>
         </repeat>
       </view>
@@ -114,7 +114,7 @@
 <script>
   import wepy from 'wepy'
   import * as config from '../config'
-  import AV from '../av.js';
+  import AV from '../av.js'
 
   export default class Index extends wepy.page {
     config = {
@@ -129,7 +129,7 @@
       view: {// 设置view高度
         height: wepy.$instance.globalData.HEIGHT - 300
       },
-      books: config.books,
+      books: [],
       pages: {
         cont: config.tao1,
         prevDisabled: true,
@@ -227,6 +227,22 @@
       //     })
       //   }
       // })
+
+      AV.init({
+        appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz',
+        appKey: 'LprdSt2PENxvkdrjqeErNIv6'
+      })
+      new AV.Query('wxbooksname')
+        .descending('createdAt')
+        .find()
+        .then((books) => {
+          console.log(books)
+          this.books = books
+          // this.pages.cont = mybook
+          this.$apply()
+          // console.log(this.pages.cont[0].cont)
+        })
+        .catch(console.error)
 
       this.$parent.getUserInfo(function (userInfo) {
         if (userInfo) {

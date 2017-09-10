@@ -79,21 +79,24 @@
         </view>
     </panel>
 
+    <view wx:if="{{loading}}">{{loading}}加载中...</view>
+
     <!-- 设置内容 -->
     <scroll-view scroll-y @scrolltolower="lower" style="height:{{view.height}}rpx">
       <view style="padding:50rpx 80rpx;">
-        <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].title}}</view>
-        <repeat for="{{pages.cont[pages.pagesNum].cont}}" index="index" item="item" key="key">
+        <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].chapter}}</view>
+        <!-- <view>{{pages.cont[pages.pagesNum].cont}}</view> -->
+        <!-- <view>{{pages.cont[pages.pagesNum].content}}</view> -->
+        <repeat for="{{pages.cont[pages.pagesNum].content}}" index="index" item="item" key="key">
           <view class="cont-item">{{item}}</view>
         </repeat>
       </view>
 
-      <view>
+      <!-- <view>
         <repeat for="{{mybook}}" index="index" item="item" key="key">
           <view class="cont-item">{{item.content}}</view>
-          <!-- <view class="cont-item">{{item.title}}</view> -->
         </repeat>
-      </view>
+      </view> -->
       
     </scroll-view>
 
@@ -116,7 +119,7 @@
 <script>
   import wepy from 'wepy'
   import * as config from '../config'
-  import AV from '../av.js';
+  import AV from '../av.js'
 
   export default class Index extends wepy.page {
     config = {
@@ -128,6 +131,7 @@
     mixins = []
 
     data = {
+      loading: true, // 加载中
       view: {// 设置view高度
         height: wepy.$instance.globalData.HEIGHT - 300
       },
@@ -138,10 +142,10 @@
         nextDisabled: false,
         pagesNum: 0
       },
-      mybook:{},//leancloiud获取
+      mybook: { }, // leancloiud获取
       mynum: 20,
       userInfo: {
-        nickName: '加载中...'
+        nickName: '阅读'
       },
       normalTitle: '原始标题',
       setTimeoutTitle: '标题三秒后会被修改',
@@ -175,6 +179,7 @@
         this.pages.pagesNum = this.pages.pagesNum + 1
         this.$apply()
         this.methods.initPageBtn()
+        console.log(this.pages)
       },
       initPageBtn: () => {
         this.pages.prevDisabled = false
@@ -218,21 +223,27 @@
       // console.log(options.id)
       // console.log(config)
       // console.log(config[options.id])
-      this.pages.cont = config[options.id]
-      this.$apply()
-      console.log('books')
-      console.log(this.pages.cont)
-      AV.init({ 
-        appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz', 
-        appKey: 'LprdSt2PENxvkdrjqeErNIv6', 
-      });
-      new AV.Query('books')
-        .descending('createdAt')
+      // this.pages.cont = config[options.id]
+      // AV.init({
+      //   appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz',
+      //   appKey: 'LprdSt2PENxvkdrjqeErNIv6',
+      // })
+      new AV.Query('wxbooks')
+        // .descending('createdAt')
+        .equalTo('title', options.id)
         .find()
         .then((mybook) => {
-          this.mybook = mybook
+          console.log(mybook)
+          if (mybook.length > 0) {
+            self.mybook = mybook
+            self.pages.cont = mybook
+          }
+          self.loading = false
+          console.log(self.loading)
+          self.$apply()
+          // console.log(this.pages.cont[0].cont)
         })
-        .catch(console.error);
+        .catch(console.error)
 
       // wepy.startCompass({
       //   complete: function(r) {
@@ -243,20 +254,20 @@
       //   }
       // })
 
-      this.$parent.getUserInfo(function (userInfo) {
-        if (userInfo) {
-          self.userInfo = userInfo
-        }
-        self.normalTitle = '标题已被修改'
+      // this.$parent.getUserInfo(function (userInfo) {
+      //   if (userInfo) {
+      //     self.userInfo = userInfo
+      //   }
+      //   self.normalTitle = '标题已被修改'
 
-        self.setTimeoutTitle = '标题三秒后会被修改'
-        setTimeout(() => {
-          self.setTimeoutTitle = '到三秒了'
-          self.$apply()
-        }, 3000)
+      //   self.setTimeoutTitle = '标题三秒后会被修改'
+      //   setTimeout(() => {
+      //     self.setTimeoutTitle = '到三秒了'
+      //     self.$apply()
+      //   }, 3000)
 
-        self.$apply()
-      })
+      //   self.$apply()
+      // })
     }
   }
 </script>
