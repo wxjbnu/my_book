@@ -221,6 +221,7 @@
       this.pages.cont = config[options.id]
       this.$apply()
       console.log('books')
+      console.log(this.pages.cont)
       AV.init({ 
         appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz', 
         appKey: 'LprdSt2PENxvkdrjqeErNIv6', 
