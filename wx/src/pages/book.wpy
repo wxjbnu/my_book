@@ -79,11 +79,19 @@
         </view>
     </panel>
 
+    <!-- 设置内容 -->
     <scroll-view scroll-y @scrolltolower="lower" style="height:{{view.height}}rpx">
       <view style="padding:50rpx 80rpx;">
         <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].title}}</view>
         <repeat for="{{pages.cont[pages.pagesNum].cont}}" index="index" item="item" key="key">
           <view class="cont-item">{{item}}</view>
+        </repeat>
+      </view>
+
+      <view>
+        <repeat for="{{mybook}}" index="index" item="item" key="key">
+          <view class="cont-item">{{item.content}}</view>
+          <!-- <view class="cont-item">{{item.title}}</view> -->
         </repeat>
       </view>
       
@@ -108,6 +116,7 @@
 <script>
   import wepy from 'wepy'
   import * as config from '../config'
+  import AV from '../av.js';
 
   export default class Index extends wepy.page {
     config = {
@@ -129,6 +138,7 @@
         nextDisabled: false,
         pagesNum: 0
       },
+      mybook:{},//leancloiud获取
       mynum: 20,
       userInfo: {
         nickName: '加载中...'
@@ -205,11 +215,23 @@
 
     onLoad(options) {
       let self = this
-      console.log(options.id)
-      console.log(config)
-      console.log(config[options.id])
+      // console.log(options.id)
+      // console.log(config)
+      // console.log(config[options.id])
       this.pages.cont = config[options.id]
       this.$apply()
+      console.log('books')
+      AV.init({ 
+        appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz', 
+        appKey: 'LprdSt2PENxvkdrjqeErNIv6', 
+      });
+      new AV.Query('books')
+        .descending('createdAt')
+        .find()
+        .then((mybook) => {
+          this.mybook = mybook
+        })
+        .catch(console.error);
 
       // wepy.startCompass({
       //   complete: function(r) {

@@ -114,6 +114,7 @@
 <script>
   import wepy from 'wepy'
   import * as config from '../config'
+  import AV from '../av.js';
 
   export default class Index extends wepy.page {
     config = {
@@ -218,7 +219,6 @@
 
     onLoad() {
       let self = this
-
       // wepy.startCompass({
       //   complete: function(r) {
       //     wepy.onCompassChange(function (res) {

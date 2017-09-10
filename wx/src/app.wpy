@@ -16,6 +16,8 @@ import 'wepy-async-function'
 //   const appId = 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz';
 //   const appKey = 'LprdSt2PENxvkdrjqeErNIv6';
 //   AV.init({ appId, appKey });
+import AV from './av.js';
+
 
 export default class extends wepy.app {
   config = {
@@ -52,6 +54,7 @@ export default class extends wepy.app {
     //   }, function (error) {
 
     //   });
+    // this.setData({ todos })
 
     try {
       const deviceInfo = wepy.getSystemInfoSync()
