@@ -67,7 +67,7 @@
     <panel class="main-head">
         <view>
           <button type="default"
-            disabled="{{pages.prevDisabled}}" @tap="prevPage" hover-class="other-button-hover">上一页</button>
+            disabled="{{page == 0}}" @tap="prevPage" hover-class="other-button-hover">上一页</button>
         </view>
         <view class="userinfo">
           <!-- <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/> -->
@@ -75,7 +75,7 @@
         </view>
         <view>
           <button type="default"
-            disabled="{{pages.nextDisabled}}" @tap="nextPage" hover-class="other-button-hover">下一页</button>
+            disabled="{{page == mybook.length - 1 || mybook.length == 0}}" @tap="nextPage" hover-class="other-button-hover">下一页</button>
         </view>
     </panel>
 
@@ -87,7 +87,7 @@
         <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].chapter}}</view>
         <!-- <view>{{pages.cont[pages.pagesNum].cont}}</view> -->
         <!-- <view>{{pages.cont[pages.pagesNum].content}}</view> -->
-        <repeat for="{{pages.cont[pages.pagesNum].content}}" index="index" item="item" key="key">
+        <repeat for="{{readBook.content}}" index="index" item="item" key="key">
           <view class="cont-item">{{item}}</view>
         </repeat>
       </view>
@@ -136,13 +136,15 @@
         height: wepy.$instance.globalData.HEIGHT - 300
       },
       books: config.books,
+      page: 0, // 页码
       pages: {
         cont: config.tao1,
         prevDisabled: true,
         nextDisabled: false,
         pagesNum: 0
       },
-      mybook: { }, // leancloiud获取
+      readBook: [], // 当前的页面
+      mybook: [], // leancloiud获取
       mynum: 20,
       userInfo: {
         nickName: '阅读'
@@ -165,18 +167,22 @@
           this.pages.prevDisabled = true
           return
         }
+        this.page = this.page - 1
         this.pages.prevDisabled = false
         this.pages.pagesNum = this.pages.pagesNum - 1
+        this.readBook = this.mybook[this.pages.pagesNum]
         this.$apply()
         this.methods.initPageBtn()
       },
       nextPage: () => {
-        if (this.pages.pagesNum === this.pages.cont.length - 1) {
+        if (this.pages.pagesNum === this.mybook.length - 1) {
           this.pages.nextDisabled = true
           return
         }
+        this.page = this.page + 1
         this.pages.nextDisabled = false
         this.pages.pagesNum = this.pages.pagesNum + 1
+        this.readBook = this.mybook[this.pages.pagesNum]
         this.$apply()
         this.methods.initPageBtn()
         console.log(this.pages)
@@ -188,7 +194,7 @@
           this.pages.prevDisabled = true
           return
         }
-        if (this.pages.pagesNum === this.pages.cont.length - 1) {
+        if (this.pages.pagesNum === this.mybook.length - 1) {
           this.pages.nextDisabled = true
           // return
         }
@@ -217,9 +223,32 @@
         console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
       }
     }
-
+    onShow () {
+      // let self = this
+      // this.readBook = []
+      // new AV.Query('wxbooks')
+      //   // .descending('createdAt')
+      //   .equalTo('title', options.id)
+      //   .find()
+      //   .then((mybook) => {
+      //     console.log(mybook)
+      //     if (mybook.length > 0) {
+      //       self.mybook = mybook
+      //       // self.pages.cont = mybook
+      //       this.readBook = mybook[0]
+      //       console.log(mybook[0].content)
+      //       console.log(mybook[0])
+      //     }
+      //     self.loading = false
+      //     console.log(self.loading)
+      //     self.$apply()
+      //     // console.log(this.pages.cont[0].cont)
+      //   })
+      //   .catch(console.error)
+    }
     onLoad(options) {
       let self = this
+      this.readBook = []
       // console.log(options.id)
       // console.log(config)
       // console.log(config[options.id])
@@ -236,7 +265,10 @@
           console.log(mybook)
           if (mybook.length > 0) {
             self.mybook = mybook
-            self.pages.cont = mybook
+            // self.pages.cont = mybook
+            this.readBook = mybook[0]
+            console.log(mybook[0].content)
+            console.log(mybook[0])
           }
           self.loading = false
           console.log(self.loading)
