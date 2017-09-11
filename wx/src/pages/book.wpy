@@ -71,7 +71,9 @@
         </view>
         <view class="userinfo">
           <!-- <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/> -->
-          <view class="userinfo-nickname">{{ userInfo.nickName }}{{direction}}</view>
+          <!-- <view class="userinfo-nickname">{{ userInfo.nickName }}{{direction}}</view> -->
+          <view class="userinfo-nickname">{{ readBook.title }}</view>
+          <view class="userinfo-nickname">{{readBook.chapter}}</view>
         </view>
         <view>
           <button type="default"
@@ -84,7 +86,7 @@
     <!-- 设置内容 -->
     <scroll-view scroll-y @scrolltolower="lower" style="height:{{view.height}}rpx">
       <view style="padding:50rpx 80rpx;">
-        <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].chapter}}</view>
+        <view style="text-align:center;padding-bottom:20rpx;">{{readBook.chapter}}</view>
         <!-- <view>{{pages.cont[pages.pagesNum].cont}}</view> -->
         <!-- <view>{{pages.cont[pages.pagesNum].content}}</view> -->
         <repeat for="{{readBook.content}}" index="index" item="item" key="key">

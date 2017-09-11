@@ -28,6 +28,8 @@
 const AV = window.AV
 const table = 'wxbooks'
 const bookname = 'wxbooksname'
+import {autoBook} from  './../autoBook.js'
+
 export default {
   name: 'add',
   data () {
@@ -51,6 +53,7 @@ export default {
       this.bookArr.push('')
     },
     addArt () {
+      var self = this
       var TestObject = AV.Object.extend(table)
       var BookObject = AV.Object.extend(bookname)
       var bookQuery = new AV.Query(bookname)
@@ -65,6 +68,8 @@ export default {
         chapter: this.chapter,
         content: this.bookArr
       }).then(function (object) {
+        self.itemArr = ['']
+        self.bookArr = ['']
         alert('add article!')
       })
 
@@ -84,10 +89,35 @@ export default {
         console.log(error)
       })
       console.log(bookObject)
+    },
+    addwx () {
+      let i = 0
+      this.testadd (i)
+    },
+    nextArt (i) {
+      this.testadd(autoBook[i])
+    },
+    testadd (i) {
+      var TestObject = AV.Object.extend(table)
+      var testObject = new TestObject()
+      testObject.save({
+        title: '周易',
+        chapter: autoBook[i].title,
+        content: autoBook[i].cont
+      }).then((object) => {
+        if(i < autoBook.length){
+          i++
+          console.log(i)
+          this.testadd(i)
+        }else {
+          console.log('end')
+        }
+      })
     }
   },
   mounted () {
-    // console.log(window.AV)
+    console.log(autoBook)
+    // this.testadd(0)
   }
 }
 </script>
