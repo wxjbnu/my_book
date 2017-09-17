@@ -28,6 +28,9 @@
 const AV = window.AV
 const table = 'wxbooks'
 const bookname = 'wxbooksname'
+const TestObject = AV.Object.extend(table)
+const BookObject = AV.Object.extend(bookname)
+const bookQuery = new AV.Query(bookname)
 import {autoBook} from  './../autoBook.js'
 
 export default {
@@ -36,6 +39,7 @@ export default {
     return {
       msg: 'Welcome to Your Vue.js App',
       name: '', // 书名
+      bookname: 'wxbooksname',
       chapter: '', // 章节名称
       itemArr: [''], // 至少有一项
       bookArr: [''], // 至少有一项
@@ -54,9 +58,7 @@ export default {
     },
     addArt () {
       var self = this
-      var TestObject = AV.Object.extend(table)
-      var BookObject = AV.Object.extend(bookname)
-      var bookQuery = new AV.Query(bookname)
+      
 
       var testObject = new TestObject()
       var bookObject = new BookObject()

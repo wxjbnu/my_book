@@ -105,12 +105,12 @@
     <view class="footer">
       <scroll-view scroll-x style="padding:10rpx 30rpx;box-sizing: border-box;">
         <view class="page-p">
-          <repeat for="{{pages.cont}}" index="index" item="item" key="key">
+          <repeat for="{{mybook}}" index="index" item="item" key="key">
             <text class="page-item" style="" @tap="sel({{index}})">{{index+1}}</text>
           </repeat>
         </view>
       </scroll-view>
-      <view>共{{pages.cont.length}}页</view>
+      <view>共{{mybook.length}}页</view>
     </view>
 
 
@@ -259,6 +259,7 @@
       //   appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz',
       //   appKey: 'LprdSt2PENxvkdrjqeErNIv6',
       // })
+      this.page = 0
       new AV.Query('wxbooks')
         // .descending('createdAt')
         .equalTo('title', options.id)
