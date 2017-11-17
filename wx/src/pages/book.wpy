@@ -86,7 +86,7 @@
     <!-- 设置内容 -->
     <scroll-view scroll-y @scrolltolower="lower" style="height:{{view.height}}rpx">
       <view style="padding:50rpx 80rpx;">
-        <view style="text-align:center;padding-bottom:20rpx;">{{readBook.chapter}}</view>
+        <!-- <view style="text-align:center;padding-bottom:20rpx;">{{readBook.chapter}}</view> -->
         <!-- <view>{{pages.cont[pages.pagesNum].cont}}</view> -->
         <!-- <view>{{pages.cont[pages.pagesNum].content}}</view> -->
         <repeat for="{{readBook.content}}" index="index" item="item" key="key">
@@ -103,13 +103,13 @@
     </scroll-view>
 
     <view class="footer">
-      <scroll-view scroll-x style="padding:10rpx 30rpx;box-sizing: border-box;">
+      <!-- <scroll-view scroll-x style="padding:10rpx 30rpx;box-sizing: border-box;">
         <view class="page-p">
           <repeat for="{{mybook}}" index="index" item="item" key="key">
             <text class="page-item" style="" @tap="sel({{index}})">{{index+1}}</text>
           </repeat>
         </view>
-      </scroll-view>
+      </scroll-view> -->
       <view>共{{mybook.length}}页</view>
     </view>
 

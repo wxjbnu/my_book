@@ -12,12 +12,11 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
-import AV from 'leancloud-storage'
+// import AV from 'leancloud-storage'
 //   const appId = 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz';
 //   const appKey = 'LprdSt2PENxvkdrjqeErNIv6';
 //   AV.init({ appId, appKey });
-import AV from './av.js';
-
+import AV from './av.js'
 
 export default class extends wepy.app {
   config = {
