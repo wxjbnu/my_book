@@ -67,37 +67,50 @@
     <panel class="main-head">
         <view>
           <button type="default"
-            disabled="{{pages.prevDisabled}}" @tap="prevPage" hover-class="other-button-hover">上一页</button>
+            disabled="{{page == 0}}" @tap="prevPage" hover-class="other-button-hover">上一页</button>
         </view>
         <view class="userinfo">
           <!-- <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/> -->
-          <view class="userinfo-nickname">{{ userInfo.nickName }}{{direction}}</view>
+          <!-- <view class="userinfo-nickname">{{ userInfo.nickName }}{{direction}}</view> -->
+          <view class="userinfo-nickname">{{ readBook.title }}</view>
+          <view class="userinfo-nickname">{{readBook.chapter}}</view>
         </view>
         <view>
           <button type="default"
-            disabled="{{pages.nextDisabled}}" @tap="nextPage" hover-class="other-button-hover">下一页</button>
+            disabled="{{page == mybook.length - 1 || mybook.length == 0}}" @tap="nextPage" hover-class="other-button-hover">下一页</button>
         </view>
     </panel>
 
+    <view wx:if="{{loading}}">{{loading}}加载中...</view>
+
+    <!-- 设置内容 -->
     <scroll-view scroll-y @scrolltolower="lower" style="height:{{view.height}}rpx">
       <view style="padding:50rpx 80rpx;">
-        <view style="text-align:center;padding-bottom:20rpx;">{{pages.cont[pages.pagesNum].title}}</view>
-        <repeat for="{{pages.cont[pages.pagesNum].cont}}" index="index" item="item" key="key">
+        <view style="text-align:center;padding-bottom:20rpx;">{{readBook.chapter}}</view>
+        <!-- <view>{{pages.cont[pages.pagesNum].cont}}</view> -->
+        <!-- <view>{{pages.cont[pages.pagesNum].content}}</view> -->
+        <repeat for="{{readBook.content}}" index="index" item="item" key="key">
           <view class="cont-item">{{item}}</view>
         </repeat>
       </view>
+
+      <!-- <view>
+        <repeat for="{{mybook}}" index="index" item="item" key="key">
+          <view class="cont-item">{{item.content}}</view>
+        </repeat>
+      </view> -->
       
     </scroll-view>
 
     <view class="footer">
       <scroll-view scroll-x style="padding:10rpx 30rpx;box-sizing: border-box;">
         <view class="page-p">
-          <repeat for="{{pages.cont}}" index="index" item="item" key="key">
+          <repeat for="{{mybook}}" index="index" item="item" key="key">
             <text class="page-item" style="" @tap="sel({{index}})">{{index+1}}</text>
           </repeat>
         </view>
       </scroll-view>
-      <view>共{{pages.cont.length}}页</view>
+      <view>共{{mybook.length}}页</view>
     </view>
 
 
@@ -108,6 +121,7 @@
 <script>
   import wepy from 'wepy'
   import * as config from '../config'
+  import AV from '../av.js'
 
   export default class Index extends wepy.page {
     config = {
@@ -119,19 +133,23 @@
     mixins = []
 
     data = {
+      loading: true, // 加载中
       view: {// 设置view高度
         height: wepy.$instance.globalData.HEIGHT - 300
       },
       books: config.books,
+      page: 0, // 页码
       pages: {
         cont: config.tao1,
         prevDisabled: true,
         nextDisabled: false,
         pagesNum: 0
       },
+      readBook: [], // 当前的页面
+      mybook: [], // leancloiud获取
       mynum: 20,
       userInfo: {
-        nickName: '加载中...'
+        nickName: '阅读'
       },
       normalTitle: '原始标题',
       setTimeoutTitle: '标题三秒后会被修改',
@@ -151,20 +169,25 @@
           this.pages.prevDisabled = true
           return
         }
+        this.page = this.page - 1
         this.pages.prevDisabled = false
         this.pages.pagesNum = this.pages.pagesNum - 1
+        this.readBook = this.mybook[this.pages.pagesNum]
         this.$apply()
         this.methods.initPageBtn()
       },
       nextPage: () => {
-        if (this.pages.pagesNum === this.pages.cont.length - 1) {
+        if (this.pages.pagesNum === this.mybook.length - 1) {
           this.pages.nextDisabled = true
           return
         }
+        this.page = this.page + 1
         this.pages.nextDisabled = false
         this.pages.pagesNum = this.pages.pagesNum + 1
+        this.readBook = this.mybook[this.pages.pagesNum]
         this.$apply()
         this.methods.initPageBtn()
+        console.log(this.pages)
       },
       initPageBtn: () => {
         this.pages.prevDisabled = false
@@ -173,7 +196,7 @@
           this.pages.prevDisabled = true
           return
         }
-        if (this.pages.pagesNum === this.pages.cont.length - 1) {
+        if (this.pages.pagesNum === this.mybook.length - 1) {
           this.pages.nextDisabled = true
           // return
         }
@@ -202,14 +225,60 @@
         console.log(`${this.$name} receive ${$event.name} from ${$event.source.$name}`)
       }
     }
-
+    onShow () {
+      // let self = this
+      // this.readBook = []
+      // new AV.Query('wxbooks')
+      //   // .descending('createdAt')
+      //   .equalTo('title', options.id)
+      //   .find()
+      //   .then((mybook) => {
+      //     console.log(mybook)
+      //     if (mybook.length > 0) {
+      //       self.mybook = mybook
+      //       // self.pages.cont = mybook
+      //       this.readBook = mybook[0]
+      //       console.log(mybook[0].content)
+      //       console.log(mybook[0])
+      //     }
+      //     self.loading = false
+      //     console.log(self.loading)
+      //     self.$apply()
+      //     // console.log(this.pages.cont[0].cont)
+      //   })
+      //   .catch(console.error)
+    }
     onLoad(options) {
       let self = this
-      console.log(options.id)
-      console.log(config)
-      console.log(config[options.id])
-      this.pages.cont = config[options.id]
-      this.$apply()
+      this.readBook = []
+      // console.log(options.id)
+      // console.log(config)
+      // console.log(config[options.id])
+      // this.pages.cont = config[options.id]
+      // AV.init({
+      //   appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz',
+      //   appKey: 'LprdSt2PENxvkdrjqeErNIv6',
+      // })
+      this.page = 0
+      new AV.Query('wxbooks')
+        // .descending('createdAt')
+        .equalTo('title', options.id)
+        .find()
+        .then((mybook) => {
+          console.log(mybook)
+          if (mybook.length > 0) {
+            self.mybook = mybook
+            // self.pages.cont = mybook
+            this.readBook = mybook[0]
+            console.log(mybook[0].content)
+            console.log(mybook[0])
+          }
+          self.loading = false
+          console.log(self.loading)
+          self.$apply()
+          // console.log(this.pages.cont[0].cont)
+        })
+        .catch(console.error)
 
       // wepy.startCompass({
       //   complete: function(r) {
@@ -220,20 +289,20 @@
       //   }
       // })
 
-      this.$parent.getUserInfo(function (userInfo) {
-        if (userInfo) {
-          self.userInfo = userInfo
-        }
-        self.normalTitle = '标题已被修改'
+      // this.$parent.getUserInfo(function (userInfo) {
+      //   if (userInfo) {
+      //     self.userInfo = userInfo
+      //   }
+      //   self.normalTitle = '标题已被修改'
 
-        self.setTimeoutTitle = '标题三秒后会被修改'
-        setTimeout(() => {
-          self.setTimeoutTitle = '到三秒了'
-          self.$apply()
-        }, 3000)
+      //   self.setTimeoutTitle = '标题三秒后会被修改'
+      //   setTimeout(() => {
+      //     self.setTimeoutTitle = '到三秒了'
+      //     self.$apply()
+      //   }, 3000)
 
-        self.$apply()
-      })
+      //   self.$apply()
+      // })
     }
   }
 </script>
