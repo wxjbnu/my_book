@@ -12,7 +12,7 @@
 <script>
 import wepy from 'wepy'
 import 'wepy-async-function'
-// import AV form 'leancloud-storage'
+import AV from 'leancloud-storage'
 //   const appId = 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz';
 //   const appKey = 'LprdSt2PENxvkdrjqeErNIv6';
 //   AV.init({ appId, appKey });
@@ -42,7 +42,12 @@ export default class extends wepy.app {
     super()
     this.use('requestfix')
   }
-
+  onReady() {
+    AV.init({
+      appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz',
+      appKey: 'LprdSt2PENxvkdrjqeErNIv6'
+    })
+  }
   onLaunch() {
     // this.testAsync()
     // this.getUserInfo()
@@ -50,8 +55,11 @@ export default class extends wepy.app {
     //   query.find().then(function (results) {
     //     console.log(results)
     //   }, function (error) {
-
     //   });
+    // AV.init({
+    //   appId: 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz',
+    //   appKey: 'LprdSt2PENxvkdrjqeErNIv6'
+    // })
 
     try {
       const deviceInfo = wepy.getSystemInfoSync()
