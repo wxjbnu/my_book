@@ -25,12 +25,14 @@
 </template>
 
 <script>
-const AV = window.AV
-const table = 'wxbooks'
-const bookname = 'wxbooksname'
-const TestObject = AV.Object.extend(table)
-const BookObject = AV.Object.extend(bookname)
-const bookQuery = new AV.Query(bookname)
+// const AV = window.AV
+// const table = 'wxbooks'
+// const bookname = 'wxbooksname'
+// const TestObject = AV.Object.extend(table)
+// const BookObject = AV.Object.extend(bookname)
+// const bookQuery = new AV.Query(bookname)
+// console.log(AV);
+
 import {autoBook} from  './../autoBook.js'
 
 export default {
@@ -119,6 +121,7 @@ export default {
   },
   mounted () {
     console.log(autoBook)
+    console.log(AV)
     // this.testadd(0)
   }
 }

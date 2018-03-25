@@ -3,28 +3,26 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import VueQuillEditor from 'vue-quill-editor'
+import vuex from 'vuex'
+
+import vueResource from 'vue-resource'
+
 import AV from 'leancloud-storage'
 
-console.log(AV)
-
-
 Vue.config.productionTip = false
-Vue.use(VueQuillEditor)
 
+// console.log(AV);
 const appId = 'jFtDXpFm5xdq4ibPYIOTDkAi-gzGzoHsz'
 const appKey = 'LprdSt2PENxvkdrjqeErNIv6'
 AV.init({ appId, appKey })
-
 window.AV = AV
 
-// console.log(AV);
-
+Vue.use(vueResource)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
-  template: '<App/>',
-  components: { App }
+  components: { App },
+  template: '<App/>'
 })
